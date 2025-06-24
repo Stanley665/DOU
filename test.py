@@ -13,5 +13,5 @@ print(players[0][0])
 try: 
     print(players[0][0].get(players[0][0].find(input())[0]))
 except:
-    print("gay no work")
+    print(")
 print(players[0][0])
