@@ -30,7 +30,7 @@ new_ranks = {
 
 combos = ['a', 'aa', 'aaa', 'aaab', 'aaabb', 'aaaa', 'aabbcc', 'aaabbb', 'aaabbbcd', 'aaabbbccdd']
 
-def oneDiff(card1, card2):
+def isConsecutive(card1, card2):
     return abs(new_ranks["values"][card1.value]-new_ranks["values"][card2.value])==1
 
 def nextVal(value):
@@ -49,6 +49,7 @@ def prevVal(value):
 
 def maxDupes(cards):
     copy = pd.Stack(cards=cards, sort=True, ranks=new_ranks)
+    copy.sort()
     maxDupe = 0
     dupeCard = None
     numDupes = 0
@@ -72,67 +73,94 @@ def playCards(hand, choice):
         return None
     cards = pd.Stack(cards=copy.get_list(list, limit=1), sort=True, ranks=new_ranks)
     
-    if(cards.size==1):
-        return (cards[0], 'a')
+    # if(cards.size==1):
+    #     return (cards[0], 'a')
     
-    if(cards.size==2 and cards[0].value==cards[1].value):
-        if(cards[0].value=="Joker"):
-            return (cards[0], 'aaaa')
-        return (cards[0], 'aa')
+    # if(cards.size==2 and cards[0].value==cards[1].value):
+    #     if(cards[0].value=="Joker"):
+    #         return (cards[0], 'aaaa')
+    #     return (cards[0], 'aa')
     
+        
     maxDupe, dupeCard, numDupes = maxDupes(cards)
-    if(maxDupe==3):
-        if(cards.size==3):
-            return (dupeCard, 'aaa')
-        if(cards.size==4):
-            return (dupeCard, 'aaab')
-        if(cards.size==5):
-            return (dupeCard, 'aaabb')
-        
-    if(maxDupe==4 and cards.size==4):
-        return (dupeCard, 'aaaa')
-    
-    if(maxDupe==3 and numDupes==2 and cards.size>=6):
-        dupe_1 = cards.get(dupeCard.value)[0]
-        
+    if(maxDupe==3 and not len(cards.find('Joker'))):
+        combo = 'aaa'
+        card = dupeCard
+        tripples = []
+        tripples.append(cards.get(dupeCard.value))
+        while(maxDupe==3):
+            maxDupe, dupeCard, numDupes = maxDupes(cards)
+            tripples.append(cards.get(dupeCard.value))
+            if(not isConsecutive(tripples[-1], tripples[-2])): return None
+            combo+=chr(ord(combo[-1]) + 1)+chr(ord(combo[-1]) + 1)+chr(ord(combo[-1]) + 1)
         maxDupe, dupeCard, numDupes = maxDupes(cards)
+        if(numDupes==len(tripples)):
+            if(maxDupe==1):
+                for i in range(len(tripples)):
+                    combo+=chr(ord(combo[-1])
+                return (card, combo)
+            elif(maxDupe==2):
+                for i in range(len(tripples)):
+                    combo+=chr(ord(combo[-1])+chr(ord(combo[-1]) + 1)
+                return (card, combo)
+        elif(not len(cards)): return (card, combo)
+
+
+
+
+
+    
+    # maxDupe, dupeCard, numDupes = maxDupes(cards)
+    # if(maxDupe==3):
+    #     cards.get(dupeCard.value)
+    #     if(cards.size==0):
+    #         return (dupeCard, 'aaa')
+    #     if(cards.size==1):
+    #         return (dupeCard, 'aaab')
+    #     if(cards.size==2 and cards[0].eq(cards[1], new_ranks)):
+    #         return (dupeCard, 'aaabb')
+    
+    # if(maxDupe==3 and numDupes==2 and cards.size>=6):
+    #     dupe_1 = cards.get(dupeCard.value)[0]
+        
+    #     maxDupe, dupeCard, numDupes = maxDupes(cards)
 
         
-        if(dupeCard.lt(dupe_1, new_ranks)):
-            dupe_2 = dupe_1
-            dupe_1 = cards.get(dupeCard.value)[0]
-        else: 
-            dupe_2 = cards.get(dupeCard.value)[0]
-        if(maxDupe==3):
-            if(oneDiff(dupe_1, dupe_2)):
-                if(not cards.size):
-                    return (dupe_1, 'aaabbb')
-                if(cards.size==2 and cards[0].ne(cards[1], new_ranks)):
-                    return (dupe_1, 'aaabbbcd')
-                if(cards.size==4 and cards[0].eq(cards[1], new_ranks) and cards[2].eq(cards[3], new_ranks) and cards[1].ne(cards[2], new_ranks)):
-                    return (dupe_1, 'aaabbbccdd')
+    #     if(dupeCard.lt(dupe_1, new_ranks)):
+    #         dupe_2 = dupe_1
+    #         dupe_1 = cards.get(dupeCard.value)[0]
+    #     else: 
+    #         dupe_2 = cards.get(dupeCard.value)[0]
+    #     if(maxDupe==3):
+    #         if(isConsecutive(dupe_1, dupe_2)):
+    #             if(not cards.size):
+    #                 return (dupe_1, 'aaabbb')
+    #             if(cards.size==2 and cards[0].ne(cards[1], new_ranks)):
+    #                 return (dupe_1, 'aaabbbcd')
+    #             if(cards.size==4 and cards[0].eq(cards[1], new_ranks) and cards[2].eq(cards[3], new_ranks) and cards[1].ne(cards[2], new_ranks)):
+    #                 return (dupe_1, 'aaabbbccdd')
         
+
+
+
     if(maxDupe==4 and cards.size==4):
         return (dupeCard, 'aaaa')
     
     if(maxDupe==1 and cards.size>=5 and not len(cards.find('Joker'))):
         combo = 'a'
         for i in range(cards.size-1):
-            if(not oneDiff(cards[i], cards[i+1])):
+            if(not isConsecutive(cards[i], cards[i+1])):
                 return None
-            combo+=chr(ord(combo[len(combo)-1]) + 1)
+            combo+=chr(ord(combo[-1]) + 1)
         return (cards[0], combo)
     
     if(maxDupe==2 and cards.size>=6 and cards.size%numDupes==0 and not len(cards.find('Joker'))):
         combo = 'aa'
         for i in range(int(1.0*cards.size/2)-1):
-            if(not oneDiff(cards[i*2], cards[(i+1)*2])):
+            if(not isConsecutive(cards[i*2], cards[(i+1)*2])):
                 return None
             combo+=chr(ord(combo[len(combo)-1]) + 1)+chr(ord(combo[len(combo)-1]) + 1)
         return (cards[0], combo)
-    
-    if(len(cards)==2 and cards[0].suit=="Joker" and cards[1].suit=="Joker"):
-            return (cards[0], 'aaaa')
     return None
 
 
@@ -216,13 +244,19 @@ class simpleAI:
                     combos = self.getCombos(curr.value)
                     
                     if(not any('aaaa' in combo for combo in combos)):
+                        # if(table[1]=='aaab'):
+
+                        # elif(table[1]=='aaabb'):
+
+                        # elif(table[1]=='aaabbbcd'):
+
+                        # elif(table[1]=='aaabbbccdd')
                         for combo in combos:
                             selection = playCards(self.hand, combo)
                             if(selection[1]==table[1]):
                                 print(combos)
                                 play = selection
                                 break
-                    break
                 i+=1
             if(not play and table[1]!='aaaa'):
                 i = 0
