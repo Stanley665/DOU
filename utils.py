@@ -36,8 +36,14 @@ def oneDiff(card1, card2):
 def nextVal(value):
     ranks = list(new_ranks['values'].keys())[::-1]
     try:
-        idx = ranks.index(value)
-        return ranks[idx+1]
+        return ranks[ranks.index(value)+1]
+    except (ValueError, IndexError):
+        return None
+    
+def prevVal(value):
+    ranks = list(new_ranks['values'].keys())[::-1]
+    try:
+        return ranks[ranks.index(value)-1]
     except (ValueError, IndexError):
         return None
 
@@ -125,8 +131,18 @@ def playCards(hand, choice):
             combo+=chr(ord(combo[len(combo)-1]) + 1)+chr(ord(combo[len(combo)-1]) + 1)
         return (cards[0], combo)
     
-    
+    if(len(cards)==2 and cards[0].suit=="Joker" and cards[1].suit=="Joker"):
+            return (cards[0], 'aaaa')
     return None
+
+
+
+def canPlay(play, table):
+    if(play):
+        if(not table): return True
+        if(play[1]=='aaaa' and table[1]!='aaaa'): return True
+        if(play[1]==table[1] and play[0].gt(table[0], new_ranks)): return True
+    return False
 
 
 
@@ -137,8 +153,8 @@ class Human:
         self.name = name
     
     def select(self, table):
-        inp = input(f"Your turn: \n{self.hand} \nSelect cards or 'space' to skip: ")
-        if(inp=='space' or inp==" "):
+        inp = input(f"Your turn: \n{self.hand} \nSelect cards or 'enter' to skip: ")
+        if(inp=='' or inp==" "):
             play = None
             print(f"{self.name} have skipped turn")
             
@@ -149,12 +165,18 @@ class Human:
         
         else:
             play = playCards(self.hand, inp)
-            while (not play or (table and play[0].le(table[0], new_ranks))):
+            while (not canPlay(play, table)):
                 inp = input("INVALID card! Try again: ")
-                if(inp=='space' or inp==" "):
+                if(inp=='' or inp==" "):
                     play = None
                     print(f"{self.name} have skipped turn")
                     break
+                
+                #admin commands ////////
+                elif(inp=="show"):
+                    return (None, "********")
+                #///////////////////////
+                
                 play = playCards(self.hand, inp)
                 
             message = ''
@@ -178,20 +200,42 @@ class simpleAI:
         combo = ''
         play = None
         if(not table):
-            combo = rd.choice(self.getCombos(self.hand[0].value))
+            idx = 0
+            combos = self.getCombos(self.hand[idx].value)
+            while(any('aaaa' in combo for combo in combos)):
+                idx+=1
+            
+            print(combos)
+            combo = max(combos, key=len)
             play = playCards(self.hand, combo)
         else:
             i = 0
-            while(i<self.hand.size-1):
+            while(not play and i<self.hand.size):
                 curr = self.hand[i]
                 if(curr.gt(table[0], new_ranks)):
                     combos = self.getCombos(curr.value)
-                    for combo in combos:
-                        if(playCards(self.hand, combo)[1]==table[1]):
-                            play = playCards(self.hand, combo)
-                            break
+                    
+                    if(not any('aaaa' in combo for combo in combos)):
+                        for combo in combos:
+                            selection = playCards(self.hand, combo)
+                            if(selection[1]==table[1]):
+                                print(combos)
+                                play = selection
+                                break
                     break
                 i+=1
+            if(not play and table[1]!='aaaa'):
+                i = 0
+                while(not play and i<self.hand.size):
+                    curr = self.hand[i]
+                    combos = self.getCombos(curr.value)
+                    for combo in combos:
+                        selection = playCards(self.hand, combo)
+                        if(selection[1]=='aaaa'):
+                            print(combos)
+                            play = selection
+                            break
+                    i+=1
         
         if(not play):
             print(f"{self.name} has skipped turn")
@@ -201,6 +245,9 @@ class simpleAI:
                 message+=f"{card}, "
             print(f"{self.name} has played {message}")
         return play
+    
+    
+    
     
     def getEmpty(self):
         return not self.hand.size
@@ -216,17 +263,19 @@ class simpleAI:
                 next = nextVal(card)
                 chain = combo
                 count = 1
-                while(self.hand.find(next) and new_ranks['values'][next]<cap):
+                while(next and self.hand.find(next) and new_ranks['values'][next]<cap):
                     count+=1
                     chain+=" "+next
                     if(count>=5):
                         combos.append(chain)
                     next = nextVal(next)
+                    
+                    
             elif(j==1):
                 next = nextVal(card)
                 chain = combo
                 count = 1
-                while(self.hand.find(next) and new_ranks['values'][next]<cap and len(self.hand.find(next))>=2):
+                while(next and self.hand.find(next) and new_ranks['values'][next]<cap and len(self.hand.find(next))>=2):
                     count+=1
                     chain+=" "+next+" "+next
                     if(count>=3):
@@ -235,7 +284,7 @@ class simpleAI:
             elif(j==2):
                 next = nextVal(card)
                 chain = combo
-                while(self.hand.find(next) and new_ranks['values'][next]<cap and len(self.hand.find(next))>=3):
+                while(next and self.hand.find(next) and new_ranks['values'][next]<cap and len(self.hand.find(next))>=3):
                     chain+=" "+next+" "+next+" "+next
                     combos.append(chain)
                     next = nextVal(next)

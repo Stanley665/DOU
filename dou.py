@@ -1,11 +1,17 @@
 import pydealer as pd
 import random as rd
+import time
 from utils import new_ranks, Human, simpleAI
 
 def show(arr):
     for player in arr:
-        if(type(curr_player)!=Human):
-            print(player.name)    
+        if(type(player)!=Human):
+            print()
+            print(player.name)
+            print()
+            print(player.hand)
+            print("\n")
+        
     
 
 if __name__ == '__main__':
@@ -38,8 +44,9 @@ if __name__ == '__main__':
         winCondition = True
         
         while(winCondition):
-            print(f"Turn {turn}")
+            print(f"\n\nTurn {turn}")
             while(True):
+                time.sleep(1)
                 print(f"{curr_player.name}'s turn.")
                 if(type(curr_player)==Human):
                     print(f"\n___________________________________________________________________________________________________________________________________________________________")
@@ -57,7 +64,7 @@ if __name__ == '__main__':
                     priority_turn = (player_turn-1) % len(players)
                     player_turn = (player_turn+1) % len(players)
                     curr_player = players[player_turn]
-                    
+                    time.sleep(1)
                     print(f"{curr_player.name}'s turn.")
                     if(type(curr_player)==Human):
                         print(f"\n___________________________________________________________________________________________________________________________________________________________")
