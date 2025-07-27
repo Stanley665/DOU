@@ -25,7 +25,8 @@ if __name__ == '__main__':
     while(True):
         print("\n\n\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GAME BEGIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
         play = (None, "")
-        seed = rd.randint(0, 2)
+        # seed = rd.randint(0, 2)
+        seed = 0
         deck.shuffle()
         table = None
         players = [Human("You"), simpleAI("P1"), simpleAI("P2")]

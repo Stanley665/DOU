@@ -26,7 +26,8 @@ while(i<ai.hand.size):
     curr = ai.hand[i]
     print(curr)
     i+=1
-
+if(''):
+    print(aaa)
 input()
 
 print(ai.hand)
