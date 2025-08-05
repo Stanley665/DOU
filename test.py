@@ -17,17 +17,9 @@ deck.add(joker_big)
 deck.add(joker_small)
 deck.shuffle()
 
-ai = simpleAI('ai')
-ai.hand.add(deck.deal(20))
-ai.hand.sort()
-
-i = 0
-while(i<ai.hand.size):
-    curr = ai.hand[i]
-    print(curr)
-    i+=1
-if(''):
-    print(aaa)
-input()
-
-print(ai.hand)
+# ai = simpleAI('ai')
+# ai.hand.add(deck.deal(20))
+# ai.hand.sort()
+card = deck.get(input('get  CARD: '), limit=1, ranks=new_ranks)[0]
+print(card)
+print(card.gt(pd.Card("Null", any), ranks=new_ranks))
