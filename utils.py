@@ -193,33 +193,43 @@ class simpleAI:
         print(f"{self.name} has played {message}")
         return play
     
+    def getSimpleCombo(self, hand, combo):
+        combo = "aa"
+        hand = copy wihout duplicates
+        comboList = sorted([self.getCombos(card.value) for card in hand if not any('aaaa' in playCards(self.hand, c) for c in self.getCombos(card.value)) or not not any('2' in c for c in self.getCombos(card.value))], key=len)
+        if(len(trash[0])==2): comboList = [arr for arr in comboList if len(arr)>=2]
+        
+        
+         
     
     def getCombo(self, table):
         if(not table):
             idx = 0
             combos = self.getCombos(self.hand[idx].value)
-            while(any('aaaa' in combo for combo in combos)):
+            while(any('aaaa' in playCards(self.hand(combo)) for combo in combos)):
                 idx+=1
                 combos = self.getCombos(self.hand[idx].value)
             print(combos)
             return max(combos, key=len)
         
         i = 0
-        while(combo=='' and i<self.hand.size):
+        while(i<self.hand.size):
             curr = self.hand[i]
             if(curr.gt(table[0], new_ranks)):
                 combos = self.getCombos(curr.value)
                 if(not any('aaaa' in combo for combo in combos)):
-                    trash = self.getTrash(table)
+                    triplets, trash = self.getTrash(table)
+                    print(f'tripplets: {triplets}, trash: {trash}')
                     for combo in combos:
-                        if(playCards(self.hand, combo)[1]==table[1]):           
-                            if(trash!=''):
-                                combo+=self.addTrash(combo, trash)
-                            
+                        if(playCards(self.hand, combo)[1]==table[1] or playCards(self.hand, combo)[1]==triplets):                   
+                            if(trash):
+                                add = self.addTrash(combo, trash)
+                                print(f'trash: {trash}, add: {add}')
+                                combo+=add
                             return combo
             i+=1
             
-        if(combo=='' and table[1]!='aaaa'):
+        if(table[1]!='aaaa'):
             i = 0
             while(combo=='' and i<self.hand.size):
                 curr = self.hand[i]
@@ -235,22 +245,50 @@ class simpleAI:
         return not self.hand.size
     
     def getTrash(self, table):
-        trash = ''
-        if('aaa' in table[1]):                
-            while(table[1][-3]!=table[1][-2]!=table[1][-1]):
-                if(table[1][-2]==table[1][-1]):
-                    trash+=table[1][-2:]
-                    table[1] = table[1][:-2]
+        trash = []
+        triplets = table[1]
+        if('aaa' in triplets):
+            while(triplets[-3]!=triplets[-1]):
+                if(triplets[-2]==triplets[-1]):
+                    trash.append('aa')
+                    triplets = triplets[:-2]
                 else:
-                    trash+=table[1][-1:]
-                    table[1] = table[1][:-1]
-        return trash
+                    trash.append('a')
+                    triplets = triplets[:-1]
+        return triplets, trash
     
     def addTrash(self, combo, trash):
         totalTrash = ''
         copy = pd.Stack(cards=self.hand, sort=True, ranks=new_ranks)
-        copy.get_list(combo.split(" "), limit=1, sort=True, ranks=new_ranks)
-        comboList = sorted([self.getCombos(card.value) for card in copy if not any('aaaa' in c for c in self.getCombos(card.value))], key=len)
+        copy.get_list(combo.split(" ")+['2', 'Small', 'Big'], sort=True, ranks=new_ranks)
+        for curr in trash:
+            totalTrash += ' '+self.getSimpleCombo(copy, curr)
+        return totalTrash
+            
+            
+            
+            
+            val = None
+            i = 0
+            while(not val and i < len(comboList)):
+                j = 0
+                arr = comboList[i]
+                    while(not val and i < len(arr)):
+                        if(playCards(copy, val))
+                    j+=1
+                i+=1
+            
+            
+            for arr in comboList:
+                if(any(playCards(copy, c)[1]==curr for c in arr)):
+                    val = arr[0][0]
+                    break
+            copy.get_list(combo.split(" "), limit=1, sort=True, ranks=new_ranks)
+            comboList = sorted([self.getCombos(card.value) for card in copy if not any('aaaa' in c for c in self.getCombos(card.value))], key=len)
+        
+        
+        
+        
         while(trash!=''):
             removed = 'a'
             trash = trash[:-1]
