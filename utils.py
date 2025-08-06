@@ -182,12 +182,29 @@ class simpleAI:
 
     def select(self, table):
         if(not table):
-            idx = 0
-            while(any('aaaa'==combo[CARD_TYPE] for combo in comboList)):
-                comboList = self.getComboList(self.hand[idx].value)
-                idx+=1
+            for card in self.hand:
+                comboList = self.getComboList(card.value)
+                if(playCards(any('aaaa'==playCards(self.hand, combo)[CARD_TYPE] for combo in comboList)): break
             print(comboList)
             combo = max(comboList, key=len)
+
+
+
+            if(not table):
+            idx = 0
+            combos = self.getCombos(self.hand[idx].value)
+            while(any('aaaa' in combo for combo in combos)):
+                idx+=1
+            
+                combos = self.getCombos(self.hand[idx].value)
+            print(combos)
+            combo = max(combos, key=len)
+            play = playCards(self.hand, combo)
+        else:
+            return max(combos, key=len)
+
+
+
         else:
             combo = self.getCombo(table[CARD_VALUE], table[CARD_TYPE], table[TRASH_TYPE])
         if(combo=='' and table[CARD_TYPE]!='aaaa'): combo = self.getCombo(NULL, 'aaaa', '')
