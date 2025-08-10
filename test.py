@@ -1,6 +1,6 @@
 import pydealer as pd
 import random as rd
-from utils import new_ranks, simpleAI
+from utils import new_ranks, simpleAI, getTrash, getComboList
 
 
 def getList(hand, inp):
@@ -17,9 +17,10 @@ deck.add(joker_big)
 deck.add(joker_small)
 deck.shuffle()
 
-# ai = simpleAI('ai')
-# ai.hand.add(deck.deal(20))
-# ai.hand.sort()
-card = deck.get(input('get  CARD: '), limit=1, ranks=new_ranks)[0]
-print(card)
-print(card.gt(pd.Card("Null", any), ranks=new_ranks))
+ai = simpleAI('ai')
+ai.hand.add(deck.deal(20))
+ai.hand.sort()
+
+print(ai.hand)
+while(True):
+    print(getTrash(ai.hand, input('combo: '), input("trashType:"), getComboList(ai.hand)))

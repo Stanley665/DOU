@@ -1,7 +1,8 @@
 import pydealer as pd
 import random as rd
 import time
-from utils import new_ranks, Human, simpleAI
+from utils import new_ranks
+from players import Human, SimpleAI
 
 def show(arr):
     for player in arr:
@@ -29,7 +30,7 @@ if __name__ == '__main__':
         seed = 0
         deck.shuffle()
         table = None
-        players = [Human("You"), simpleAI("P1"), simpleAI("P2")]
+        players = [Human("You"), SimpleAI("P1"), SimpleAI("P2")]
         player_turn = 0
         curr_player = None
         for i in range(len(players)):
@@ -46,6 +47,7 @@ if __name__ == '__main__':
         
         while(winCondition):
             print(f"\n\nTurn {turn}")
+            
             while(True):
                 time.sleep(1)
                 print(f"{curr_player.name}'s turn.")
