@@ -48,7 +48,6 @@ class SimpleAI:
         self.name = name
         self.score = 0
         
-        
 
     def select(self, table):
         if not table: 
@@ -69,3 +68,6 @@ class SimpleAI:
 
     def getEmpty(self):
         return not self.hand.size
+    
+    def __str__(self):
+        return f"\n{self.name} (simpleAI)\n{self.hand}\n"

@@ -59,7 +59,7 @@ class Game:
                         break
                     #admin commands ////////
                     while(play and play[1]=="********"):
-                        self.show(self.players)
+                        self.show()
                         play = curr_player.select(table)
                     #///////////////////////
                     
@@ -78,7 +78,7 @@ class Game:
                             break
                         #admin commands ////////
                         while(play and play[1]=="********"):
-                            self.show(self.players)
+                            self.show()
                             play = curr_player.select(table)
                         #///////////////////////
                         
@@ -112,11 +112,7 @@ class Game:
                 player.hand.empty()
             deck.empty()
             
-    def show(arr):
-        for player in arr:
+    def show(self):
+        for player in self.players:
             if(type(player)!=Human):
-                print()
-                print(player.name)
-                print()
-                print(player.hand)
-                print("\n")
+                print(player)
