@@ -1,5 +1,6 @@
 import pydealer as pd
 import random as rd
+import numpy as np
 
 CARD = 0
 CARD_TYPE = 1
@@ -121,7 +122,6 @@ def playCards(hand, choice):
     
     if((maxDupe==4 and cards.size==4) or (maxDupe==1 and cards.size==2 and dupeCard.value=='Small')):
         return (dupeCard, 'aaaa', trash)
-    print(dupeCard.value)
     return None
 
 
@@ -133,11 +133,11 @@ def canPlay(play, card, combo, trash):
 
 
 def getCombos(hand, value):
-    combos = []
+    combos = np.array([])
     cap = new_ranks['values']['2']
     combo = value
     for j in range(len(hand.find(value))):
-        combos.append(combo)
+        combos = np.append(combos, combo)
         if(j==0):
             next = nextVal(value)
             chain = combo
@@ -146,7 +146,7 @@ def getCombos(hand, value):
                 count+=1
                 chain+=" "+next
                 if(count>=5):
-                    combos.append(chain)
+                    combos = np.append(combos, chain)
                 next = nextVal(next)
         elif(j==1):
             next = nextVal(value)
@@ -156,14 +156,14 @@ def getCombos(hand, value):
                 count+=1
                 chain+=" "+next+" "+next
                 if(count>=3):
-                    combos.append(chain)
+                    combos = np.append(combos, chain)
                 next = nextVal(next)
         elif(j==2):
             next = nextVal(value)
             chain = combo
             while(next and hand.find(next) and new_ranks['values'][next]<cap and len(hand.find(next))>=3):
                 chain+=" "+next+" "+next+" "+next
-                combos.append(chain)
+                combos = np.append(combos, chain)
                 next = nextVal(next)
                 
         combo+=" "+value
@@ -180,20 +180,6 @@ def getComboList(hand):
         prev = curr
     return comboList
 
-            
-# def getTrash(hand, combo, trash, comboList):
-#     totalTrash = ''
-#     if(trash==''): return totalTrash
-#     decode = trash.split(' ')
-#     dupe, num = decode[0], int(decode[1])
-#     copy = pd.Stack(cards=hand, sort=True, ranks=new_ranks)
-#     copy.get_list(combo.split(" "), limit=1, sort=True, ranks=new_ranks)
-#     for i in range(num-1):
-#         getTrash = getPlay(copy, NULL, dupe, '', comboList)
-#         if(getTrash==''): return None
-#         copy.get_list(getTrash.split(" "), limit=1, sort=True, ranks=new_ranks)
-#         totalTrash+=' '+getTrash
-#     return totalTrash
 
 def getTrash(hand, combo, trash, comboList):
     totalTrash = ''
@@ -215,15 +201,20 @@ def getTrash(hand, combo, trash, comboList):
 
 
 def getPlay(hand, card, type, trash, comboList):
-    if(not card and not type and not trash): return max(comboList[hand[0].value], key=len)
+    if(not card and not type and not trash): 
+        combo = max(comboList[hand[0].value], key=len)
+        play = playCards(hand, combo)
+        if('aaa' in play[CARD_TYPE] and play[CARD_TYPE]!='aaaa'):
+            choice = rd.choice(['a', 'aa'])+' '+str(int(len(play[CARD_TYPE])/3))
+            newCombo = combo+' '+getTrash(hand, combo, choice, comboList)
+            if(playCards(hand, newCombo)): return newCombo
+        return combo
     
     for curr in hand:
         if(curr.gt(card, new_ranks)):
             for combo in comboList[curr.value]:
-                if(canPlay(playCards(hand, combo), card, type, '')): 
-                    comboTrash = getTrash(hand, combo, trash, comboList)
-                    if(comboTrash != ''): print(f"{len(comboTrash)}, {comboTrash}")
-                    return combo+' '+comboTrash
+                if(canPlay(playCards(hand, combo), card, type, '')):
+                    return combo+' '+getTrash(hand, combo, trash, comboList)
                 
     if(type!='aaaa'): return getPlay(hand, NULL, 'aaaa', '', comboList)
     return ''
