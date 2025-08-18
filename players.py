@@ -71,3 +71,9 @@ class SimpleAI:
     
     def __str__(self):
         return f"\n{self.name} (simpleAI)\n{self.hand}\n"
+    
+class SmartAI(SimpleAI):
+    def __init__(self, name):
+        super().__init__(name)
+
+    def select(self, table):
