@@ -1,8 +1,10 @@
 from game import Game
 from players import Human, SimpleAI
+import random as rd
 
 
 if __name__ == '__main__':
-    game = Game(SimpleAI("P3"), SimpleAI("P1"), SimpleAI("P2"), 1)
-    game.start()
+    game = Game(SimpleAI("P1"), SimpleAI("P2"), SimpleAI("P3"), 0)
+    while(True):
+        game.start(rd.randint(0, 2))
     
