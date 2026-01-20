@@ -4,7 +4,7 @@ import random as rd
 
 
 if __name__ == '__main__':
-    game = Game(SimpleAI("P1"), SimpleAI("P2"), SimpleAI("P3"), 0)
+    game = Game(Human("P1"), SimpleAI("P2"), SimpleAI("P3"))
     while(True):
         game.start(rd.randint(0, 2))
     

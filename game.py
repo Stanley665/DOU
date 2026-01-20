@@ -6,7 +6,7 @@ from players import *
 
 
 class Game:
-    def __init__(self, player_1, player_2, player_3, delay=0):
+    def __init__(self, player_1, player_2, player_3, delay=None):
         self.players = [player_1, player_2, player_3]
         self.delay = delay
         self.numGames = 1
@@ -102,9 +102,10 @@ class Game:
                 else:
                     player.score-=2
             player.hand.empty()
+        self.show()
     
     def playerSelection(self, curr_player, table):
-        time.sleep(self.delay)
+        self.delayGame()
         print(f"{curr_player.name}'s turn.")
         play = curr_player.select(table)
         win = False
@@ -123,8 +124,14 @@ class Game:
     def give(self, player, cards):
         recipient = self.players[np.where(self.players.name==player)]
         recipient.hand.add(cards)
+        
+    def delayGame(self):
+        if not self.delay:
+            time.sleep(rd.randint(50,150)*1.0/100)
+        else:
+            time.sleep(self.delay)
+        
     
     def show(self):
         for player in self.players:
-            if(type(player)!=Human):
-                print(player)
+            print(player)
